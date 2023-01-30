@@ -20,12 +20,12 @@ public:
 };
 
 
-// COM 실패 헬퍼 유틸리티
-inline void ThrowIfFailed(HRESULT hr)
-{
-	if (FAILED(hr))
-	{
-		throw ComException(hr);
-	}
-}
+//// COM 실패 헬퍼 유틸리티
+//inline void ThrowIfFailed(HRESULT hr)
+//{
+//	if (FAILED(hr))
+//	{
+//		throw ComException(hr);
+//	}
+//}
 
