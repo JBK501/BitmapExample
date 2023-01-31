@@ -1,6 +1,6 @@
 #pragma once
 #include <exception>
-#include <sstream>
+
 
 // COM 예외 헬퍼클래스
 class ComException : public std::exception

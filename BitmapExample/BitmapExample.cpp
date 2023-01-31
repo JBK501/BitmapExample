@@ -1,4 +1,5 @@
 #include "BitmapExample.h"
+#include <cmath>
 
 void BitmapExample::Initialize(HINSTANCE hInstance, LPCWSTR title, UINT width, UINT height)
 {
@@ -31,8 +32,10 @@ void BitmapExample::Render()
 	mspRenderTarget->Clear(D2D1::ColorF(0.0f, 0.2f, 0.4f, 1.0f));
 
 	ClearBuffer(D2D1::ColorF(D2D1::ColorF::LightPink));
-	FillRectToBuffer(0, 0, 100, 100, D2D1::ColorF::Red);
-	FillRectToBuffer(50, 50, 100, 100, D2D1::ColorF(D2D1::ColorF::Green,0.5f));
+	//FillRectToBuffer(0, 0, 100, 100, D2D1::ColorF::Red);
+	//FillRectToBuffer(50, 50, 100, 100, D2D1::ColorF(D2D1::ColorF::Green,0.5f));
+	//DrawCircleToBuffer(200, 200, 50, D2D1::ColorF::DeepSkyBlue);
+	DrawLineToBuffer(100, 200, 200, 400, D2D1::ColorF::Red);
 	PresentBuffer();
 
 	mspRenderTarget->DrawBitmap(mspFramebitmap.Get());
@@ -106,5 +109,76 @@ void BitmapExample::FillRectToBuffer(int left, int top, int width, int height, D
 			// 1.1.1. 버퍼에 저장한다.
 			DrawPixelToBuffer(left + w, top + h, color);
 		}
+	}
+}
+
+void BitmapExample::DrawCircleToBuffer(int x, int y, int radius, D2D1::ColorF color)
+{
+	const float pi{ 3.14f };
+	const float piMultiplyTwo{ pi * 2 };
+	float theta{};
+
+	// 1. 세타가 2파이가 될때까지 반복한다.
+	while(theta < piMultiplyTwo)
+	{
+		// 1.1. 점을 찍는다.
+		DrawPixelToBuffer(
+			static_cast<int>(x + cos(theta) * radius),
+			static_cast<int>(y + sin(theta) * radius),
+			color
+		);
+		// 1.2. 각도를 늘린다.
+		theta += 0.02;
+	}
+}
+
+void BitmapExample::DrawLineToBuffer(int x1, int y1, int x2, int y2, D2D1::ColorF color)
+{
+	// 1. 변화량을 구한다.
+	int dx{ x2 - x1 };
+	int dy{ y2 - y1 };
+
+	int x;
+	int y;
+	int op;
+	// 2. x변화량이 0이면
+	if (dx == 0)
+	{
+		x = x1;	// x고정
+		y = y1;
+		op = (y2 > y1) ?  1 : -1;
+		while (y != y2)
+		{
+			DrawPixelToBuffer(x, y, color);
+			y += op;
+		}
+		return;
+	}
+
+	// 3. y변화량이 0이면
+	if (dy == 0)
+	{
+		x = x1;
+		y = y1; // y고정
+		op = (x2 > x1) ? 1 : -1;
+		while (x != x2)
+		{
+			DrawPixelToBuffer(x, y, color);
+			x += op;
+		}
+		return;
+	}
+
+	// 4. 기울기를 구한다.
+	float m = dy / (dx * 1.0f);
+
+	// 5. 직선을 구한다.
+	op = (x1 < x2) ? 1 : -1;
+	x = x1;
+	while (x != x2)
+	{
+		y = static_cast<int>(m * (x - x1) + y1);
+		DrawPixelToBuffer(x, y, color);
+		x += op;
 	}
 }
